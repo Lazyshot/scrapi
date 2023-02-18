@@ -123,7 +123,7 @@ func (c *Controller) Scrape(ctx context.Context, cfg ScrapeConfig) (ScrapeResult
 
 					res.Data = append(res.Data, data)
 				})
-			} else {
+				// } else {
 				// zip up values into docs?
 			}
 
