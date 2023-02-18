@@ -4,6 +4,8 @@ Copyright © 2023 Bryan Peterson <lazyshot@gmail.com>
 package cmd
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lazyshot/scrapi/docs"
 	"github.com/lazyshot/scrapi/internal/api"
@@ -23,13 +25,18 @@ var serveCmd = &cobra.Command{
 		p := fetcher.NewPool()
 
 		// Register chrome-based fetcher
-		err := p.Register("chrome", fetcher.NewChromeFactory(), 10)
-		if err != nil {
-			panic(err)
+		cf := fetcher.NewChromeFactory()
+		if cf.IsChromeInstalled() {
+			err := p.Register("chrome", cf, 10)
+			if err != nil {
+				panic(err)
+			}
+		} else {
+			log.Println("no version of chromium was found installed")
 		}
 
 		// Register fast stdlib http fetcher
-		err = p.Register("http", &fetcher.HTTPFactory{}, 10)
+		err := p.Register("http", &fetcher.HTTPFactory{}, 10)
 		if err != nil {
 			panic(err)
 		}

@@ -41,12 +41,15 @@ func NewChromeFactory() *ChromeFactory {
 }
 
 func (f *ChromeFactory) Create() (Fetcher, error) {
-	ctx, _ := chromedp.NewContext(f.ctx)
 	return &ChromeFetcher{
-		ctx: ctx,
+		ctx: f.ctx,
 	}, nil
 }
 
 func (f *ChromeFactory) Destroy(fetcher Fetcher) {
 	// Nothing to do
+}
+
+func (f *ChromeFactory) IsChromeInstalled() bool {
+	return chromedp.FromContext(f.ctx).Allocator != nil
 }
