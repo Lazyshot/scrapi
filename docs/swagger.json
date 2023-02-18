@@ -1,0 +1,136 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/methods": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "list fetch methods",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/scrape": {
+            "post": {
+                "description": "scrapes a website and returns an array of data found given the input config",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "general purpose scraping endpoint",
+                "parameters": [
+                    {
+                        "description": "scrape request",
+                        "name": "{object}",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.ScrapeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.ScrapeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.ScrapeRequest": {
+            "type": "object",
+            "required": [
+                "method",
+                "url"
+            ],
+            "properties": {
+                "dataSelectors": {
+                    "description": "DataSelectors are a mapping of field name to css-style selectors or xpath expressions\nFor CSS Style selectors the value is equivalent to a jQuery $(\u003cselector\u003e).text() call\nFor XPath expressions it will be compiled and evaluated\nXPath expressions must be prefixed with \"xpath:\"",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "itemLinkSelector": {
+                    "type": "string"
+                },
+                "itemParentSelector": {
+                    "description": "ItemParentSelector would be the HTML node containing all the\ndata selectors. Data Selectors become relative to the parent",
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "method": {
+                    "description": "Method is the name of the fetcher method found at /methods",
+                    "type": "string"
+                },
+                "multiple": {
+                    "description": "Multiple signifies this is an array of items",
+                    "type": "boolean"
+                },
+                "nextPageSelector": {
+                    "description": "Required if pagination is desired",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "URL is the starting URL (e.g. search result request, something else)",
+                    "type": "string"
+                },
+                "visitItemDetailPage": {
+                    "description": "visit item detail page and _then_ use data selectors",
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.ScrapeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "num": {
+                    "type": "integer"
+                },
+                "scrapeErrors": {
+                    "type": "array",
+                    "items": {}
+                }
+            }
+        }
+    }
+}

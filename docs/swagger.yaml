@@ -1,0 +1,98 @@
+definitions:
+  api.ScrapeRequest:
+    properties:
+      dataSelectors:
+        additionalProperties:
+          type: string
+        description: |-
+          DataSelectors are a mapping of field name to css-style selectors or xpath expressions
+          For CSS Style selectors the value is equivalent to a jQuery $(<selector>).text() call
+          For XPath expressions it will be compiled and evaluated
+          XPath expressions must be prefixed with "xpath:"
+        type: object
+      itemLinkSelector:
+        type: string
+      itemParentSelector:
+        description: |-
+          ItemParentSelector would be the HTML node containing all the
+          data selectors. Data Selectors become relative to the parent
+        type: string
+      limit:
+        type: integer
+      method:
+        description: Method is the name of the fetcher method found at /methods
+        type: string
+      multiple:
+        description: Multiple signifies this is an array of items
+        type: boolean
+      nextPageSelector:
+        description: Required if pagination is desired
+        type: string
+      url:
+        description: URL is the starting URL (e.g. search result request, something
+          else)
+        type: string
+      visitItemDetailPage:
+        description: visit item detail page and _then_ use data selectors
+        type: boolean
+    required:
+    - method
+    - url
+    type: object
+  api.ScrapeResponse:
+    properties:
+      data:
+        items:
+          additionalProperties:
+            type: string
+          type: object
+        type: array
+      num:
+        type: integer
+      scrapeErrors:
+        items: {}
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /methods:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: string
+            type: array
+      summary: list fetch methods
+  /scrape:
+    post:
+      consumes:
+      - application/json
+      description: scrapes a website and returns an array of data found given the
+        input config
+      parameters:
+      - description: scrape request
+        in: body
+        name: '{object}'
+        required: true
+        schema:
+          $ref: '#/definitions/api.ScrapeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ScrapeResponse'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      summary: general purpose scraping endpoint
+swagger: "2.0"
