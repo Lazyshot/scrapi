@@ -69,7 +69,21 @@ func (a *API) HandleScrape(c *gin.Context) {
 		return
 	}
 
-	res, err := a.c.Scrape(c, controller.ScrapeConfig(req))
+	cfg := controller.ScrapeConfig{
+		Method:             req.Method,
+		URL:                req.URL,
+		DataSelectors:      req.DataSelectors,
+		Multiple:           req.Multiple,
+		ItemParentSelector: req.ItemParentSelector,
+
+		NextPageSelector: req.NextPageSelector,
+		Limit:            req.Limit,
+
+		VisitItemDetailPage: req.VisitItemDetailPage,
+		ItemLinkSelector:    req.ItemLinkSelector,
+	}
+
+	res, err := a.c.Scrape(c, cfg)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
@@ -77,7 +91,13 @@ func (a *API) HandleScrape(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, ScrapeResponse(res))
+	resp := ScrapeResponse{
+		Num:    res.Num,
+		Data:   res.Data,
+		Errors: res.Errors,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 // HandleListMethods lists available and registered fetch methods
