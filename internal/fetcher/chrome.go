@@ -3,6 +3,7 @@ package fetcher
 import (
 	"context"
 
+	cu "github.com/Davincible/chromedp-undetected"
 	"github.com/chromedp/chromedp"
 )
 
@@ -33,7 +34,12 @@ type ChromeFactory struct {
 }
 
 func NewChromeFactory() *ChromeFactory {
-	ctx, _ := chromedp.NewContext(context.Background())
+	ctx, _, err := cu.New(cu.NewConfig(
+		cu.WithHeadless(),
+	))
+	if err != nil {
+		panic(err)
+	}
 
 	return &ChromeFactory{
 		ctx: ctx,
