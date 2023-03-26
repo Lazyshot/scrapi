@@ -22,5 +22,9 @@ RUN apt update && \
 RUN mkdir /app
 COPY --from=builder /app/scrapi /app/
 
+RUN groupadd -g 999 scrapi && \
+    useradd -r -u 999 -g scrapi scrapi
+USER scrapi
+
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["/app/scrapi", "serve"]
