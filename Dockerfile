@@ -11,7 +11,7 @@ RUN go build -o scrapi .
 
 FROM chromedp/headless-shell
 
-RUN apt update && apt install dumb-init && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install dumb-init xvfb && rm -rf /var/lib/apt/lists/*
 RUN mkdir /app
 COPY --from=builder /app/scrapi /app/
 
