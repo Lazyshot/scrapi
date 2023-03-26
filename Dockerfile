@@ -9,9 +9,16 @@ RUN go mod download
 COPY . .
 RUN go build -o scrapi .
 
-FROM chromedp/headless-shell
+FROM ubuntu
 
-RUN apt update && apt install -y dumb-init xvfb && rm -rf /var/lib/apt/lists/*
+RUN apt update && \
+    apt install -y wget && \
+    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt install -y ./google-chrome-stable_current_amd64.deb && \
+    apt install -y \
+        dumb-init xvfb ca-certificates \
+        && \
+    rm -rf /var/lib/apt/lists/*
 RUN mkdir /app
 COPY --from=builder /app/scrapi /app/
 

@@ -2,6 +2,7 @@ package fetcher
 
 import (
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/proto"
 	"github.com/go-rod/stealth"
 )
 
@@ -34,6 +35,14 @@ func NewRodFactory() *RodFactory {
 
 func (f *RodFactory) Create() (Fetcher, error) {
 	p, err := stealth.Page(f.b)
+	if err != nil {
+		return nil, err
+	}
+
+	err = p.SetUserAgent(&proto.NetworkSetUserAgentOverride{
+		UserAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+	})
+
 	return &RodFetcher{
 		p: p,
 	}, err
