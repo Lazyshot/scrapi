@@ -35,8 +35,15 @@ var serveCmd = &cobra.Command{
 			log.Println("no version of chromium was found installed")
 		}
 
+		// Register rod-chrome-based fetcher
+		rf := fetcher.NewRodFactory()
+		err := p.Register("rod", rf, 10)
+		if err != nil {
+			panic(err)
+		}
+
 		// Register fast stdlib http fetcher
-		err := p.Register("http", &fetcher.HTTPFactory{}, 10)
+		err = p.Register("http", &fetcher.HTTPFactory{}, 10)
 		if err != nil {
 			panic(err)
 		}
