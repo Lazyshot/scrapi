@@ -36,6 +36,7 @@ type ChromeFactory struct {
 func NewChromeFactory() *ChromeFactory {
 	ctx, _, err := cu.New(cu.NewConfig(
 		cu.WithHeadless(),
+		cu.WithNoSandbox(false),
 	))
 	if err != nil {
 		panic(err)
